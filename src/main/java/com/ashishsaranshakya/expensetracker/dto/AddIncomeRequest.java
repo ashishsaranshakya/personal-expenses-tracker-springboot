@@ -22,6 +22,7 @@ public class AddIncomeRequest {
         income.setAmount(this.amount);
         income.setCategoryId(category);
         income.setDate(this.date);
+        income.setUserId(this.userId);
         income.setDescription(this.description);
         return income;
     }

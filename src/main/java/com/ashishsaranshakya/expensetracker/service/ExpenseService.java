@@ -59,7 +59,7 @@ public class ExpenseService {
 
         List<Map<String, Object>> expensesWithCategory = expenses.stream().map(expense -> {
             ExpenseCategory category = categories.getCategories().stream()
-                    .filter(cat -> cat.getId().equals(expense.getCategoryId()))
+                    .filter(cat -> cat.getId().equals(expense.getCategoryId().getId()))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Category not found"));
 

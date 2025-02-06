@@ -57,7 +57,7 @@ public class IncomeService {
 
         List<Map<String, Object>> incomesWithCategory = expenses.stream().map(expense -> {
             IncomeCategory category = categories.getCategories().stream()
-                    .filter(cat -> cat.getId().equals(expense.getCategoryId()))
+                    .filter(cat -> cat.getId().equals(expense.getCategoryId().getId()))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Category not found"));
 

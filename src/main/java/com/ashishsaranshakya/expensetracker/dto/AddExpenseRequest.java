@@ -21,6 +21,7 @@ public class AddExpenseRequest {
         Expense expense = new Expense();
         expense.setAmount(this.amount);
         expense.setCategoryId(category);
+        expense.setUserId(this.userId);
         expense.setDate(this.date);
         expense.setDescription(this.description);
         return expense;
