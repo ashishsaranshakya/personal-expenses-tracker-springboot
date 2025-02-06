@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface ExpenseRepository extends MongoRepository<Expense, String> {
     List<Expense> findByCategoryId(String categoryId);
+    List<Expense> findByUserId(String userId);
+
 }

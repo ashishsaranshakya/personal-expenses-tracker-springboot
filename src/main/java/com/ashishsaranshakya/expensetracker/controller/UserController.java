@@ -23,8 +23,9 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<User> getProfile(Principal principal) {
-        return ResponseEntity.ok(userService.getProfile(principal.getName()));
+    public ResponseEntity<Map<String, Object>> getProfile(Principal principal) {
+        User user = userService.getProfile(principal.getName());
+        return ResponseEntity.ok(Map.of("success", true, "user", user));
     }
 
     @PutMapping

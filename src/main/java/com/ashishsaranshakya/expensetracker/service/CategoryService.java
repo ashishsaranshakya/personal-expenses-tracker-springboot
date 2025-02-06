@@ -48,7 +48,7 @@ public class CategoryService {
                 })
                 .toList();
 
-        return Map.of("incomeCategories", incomeList, "expenseCategories", expenseList);
+        return Map.of("success", true, "incomeCategories", Map.of("categories", incomeList), "expenseCategories", Map.of("categories", expenseList));
     }
 
     private double calculateTotalIncomeAmount(String categoryId) {
