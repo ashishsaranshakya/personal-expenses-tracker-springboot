@@ -51,11 +51,11 @@ public class IncomeService {
     }
 
     public ResponseEntity<?> getIncomes(String userId) {
-        List<Income> expenses = incomeRepository.findByUserId(userId);
+        List<Income> incomes = incomeRepository.findByUserId(userId);
 
         IncomeCategories categories = incomeCategoriesRepository.findByUserId(userId);
 
-        List<Map<String, Object>> incomesWithCategory = expenses.stream().map(expense -> {
+        List<Map<String, Object>> incomesWithCategory = incomes.stream().map(expense -> {
             IncomeCategory category = categories.getCategories().stream()
                     .filter(cat -> cat.getId().equals(expense.getCategoryId().getId()))
                     .findFirst()
@@ -66,6 +66,7 @@ public class IncomeService {
             incomeMap.put("amount", expense.getAmount());
             incomeMap.put("date", expense.getDate());
             incomeMap.put("category", category.getName());
+            incomeMap.put("categoryId", category.getId());
             incomeMap.put("description", expense.getDescription());
             return incomeMap;
         }).toList();

@@ -1,9 +1,10 @@
 package com.ashishsaranshakya.expensetracker.controller;
 
+import com.ashishsaranshakya.expensetracker.model.ExpenseCategory;
+import com.ashishsaranshakya.expensetracker.model.IncomeCategory;
 import com.ashishsaranshakya.expensetracker.model.User;
 import com.ashishsaranshakya.expensetracker.service.UserService;
 import com.ashishsaranshakya.expensetracker.service.CategoryService;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,14 +41,14 @@ public class UserController {
     }
 
     @PostMapping("/categories/income")
-    public ResponseEntity<Map<String, String>> addIncomeCategory(@RequestBody Map<String, String> request, Principal principal) {
-        categoryService.addIncomeCategory(principal.getName(), request.get("name"));
+    public ResponseEntity<Map<String, String>> addIncomeCategory(@RequestBody IncomeCategory incomeCategory, Principal principal) {
+        categoryService.addIncomeCategory(principal.getName(), incomeCategory);
         return ResponseEntity.ok(Map.of("success", "Category added successfully"));
     }
 
     @PostMapping("/categories/expense")
-    public ResponseEntity<Map<String, String>> addExpenseCategory(@RequestBody Map<String, String> request, Principal principal) {
-        categoryService.addExpenseCategory(principal.getName(), request.get("name"));
+    public ResponseEntity<Map<String, String>> addExpenseCategory(@RequestBody ExpenseCategory expenseCategory, Principal principal) {
+        categoryService.addExpenseCategory(principal.getName(), expenseCategory);
         return ResponseEntity.ok(Map.of("success", "Category added successfully"));
     }
 

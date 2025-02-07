@@ -68,6 +68,7 @@ public class ExpenseService {
             expenseMap.put("amount", expense.getAmount());
             expenseMap.put("date", expense.getDate());
             expenseMap.put("category", category.getName());
+            expenseMap.put("categoryId", category.getId());
             expenseMap.put("description", expense.getDescription());
             return expenseMap;
         }).toList();

@@ -12,15 +12,20 @@ public class CategoryService {
 
     private final IncomeCategoriesRepository incomeCategoriesRepository;
     private final ExpenseCategoriesRepository expenseCategoriesRepository;
+    private final IncomeCategoryRepository incomeCategoryRepository;
+    private final ExpenseCategoryRepository expenseCategoryRepository;
     private final IncomeRepository incomeRepository;
     private final ExpenseRepository expenseRepository;
 
     public CategoryService(IncomeCategoriesRepository incomeCategoriesRepository, ExpenseCategoriesRepository expenseCategoriesRepository,
-                           IncomeRepository incomeRepository, ExpenseRepository expenseRepository) {
+                           IncomeRepository incomeRepository, ExpenseRepository expenseRepository, IncomeCategoryRepository incomeCategoryRepository,
+                           ExpenseCategoryRepository expenseCategoryRepository) {
         this.incomeCategoriesRepository = incomeCategoriesRepository;
         this.expenseCategoriesRepository = expenseCategoriesRepository;
         this.incomeRepository = incomeRepository;
         this.expenseRepository = expenseRepository;
+        this.incomeCategoryRepository = incomeCategoryRepository;
+        this.expenseCategoryRepository = expenseCategoryRepository;
     }
 
     public Map<String, Object> getCategories(String userId) {
@@ -61,15 +66,17 @@ public class CategoryService {
         return expenses.stream().mapToDouble(Expense::getAmount).sum();
     }
 
-    public void addIncomeCategory(String userId, String name) {
+    public void addIncomeCategory(String userId, IncomeCategory incomeCategory) {
         IncomeCategories categories = incomeCategoriesRepository.findByUserId(userId);
-        categories.getCategories().add(new IncomeCategory(name));
+        incomeCategoryRepository.save(incomeCategory);
+        categories.getCategories().add(incomeCategory);
         incomeCategoriesRepository.save(categories);
     }
 
-    public void addExpenseCategory(String userId, String name) {
+    public void addExpenseCategory(String userId, ExpenseCategory expenseCategory) {
         ExpenseCategories categories = expenseCategoriesRepository.findByUserId(userId);
-        categories.getCategories().add(new ExpenseCategory(name));
+        expenseCategoryRepository.save(expenseCategory);
+        categories.getCategories().add(expenseCategory);
         expenseCategoriesRepository.save(categories);
     }
 
