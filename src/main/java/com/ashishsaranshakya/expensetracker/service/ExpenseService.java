@@ -1,9 +1,9 @@
 package com.ashishsaranshakya.expensetracker.service;
 
 import com.ashishsaranshakya.expensetracker.dto.AddExpenseRequest;
+import com.ashishsaranshakya.expensetracker.dto.UpdateExpenseRequest;
 import com.ashishsaranshakya.expensetracker.model.*;
 import com.ashishsaranshakya.expensetracker.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -13,21 +13,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
     private final UserRepository userRepository;
+    private final ExpenseCategoryRepository expenseCategoryRepository;
     private final ExpenseCategoriesRepository expenseCategoriesRepository;
 
     public ExpenseService(ExpenseRepository expenseRepository,
                           UserRepository userRepository,
-                          ExpenseCategoriesRepository expenseCategoriesRepository) {
+                          ExpenseCategoriesRepository expenseCategoriesRepository,
+                          ExpenseCategoryRepository expenseCategoryRepository) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
         this.expenseCategoriesRepository = expenseCategoriesRepository;
+        this.expenseCategoryRepository = expenseCategoryRepository;
     }
 
     @Transactional
@@ -82,19 +84,24 @@ public class ExpenseService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateExpense(String id, Expense updatedExpense) {
-        Expense existingExpense = expenseRepository.findById(id).orElseThrow(() -> new RuntimeException("Expense not found"));
+    public ResponseEntity<?> updateExpense(String id, UpdateExpenseRequest updatedExpense) {
+        Expense expense = expenseRepository.findById(id).orElseThrow(() -> new RuntimeException("Expense not found"));
+        User user = userRepository.findById(expense.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
 
-        User user = userRepository.findById(existingExpense.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setBalance(user.getBalance() + existingExpense.getAmount() - updatedExpense.getAmount());
-        userRepository.save(user);
+        if(updatedExpense.getAmount() != expense.getAmount()) {
+            user.setBalance(user.getBalance() + expense.getAmount() - updatedExpense.getAmount());
+            userRepository.save(user);
+            expense.setAmount(updatedExpense.getAmount());
+        }
 
-        existingExpense.setAmount(updatedExpense.getAmount());
-        existingExpense.setDate(updatedExpense.getDate());
-        existingExpense.setCategoryId(updatedExpense.getCategoryId());
-        existingExpense.setDescription(updatedExpense.getDescription());
+        if(updatedExpense.getDate() != null) expense.setDate(updatedExpense.getDate());
+        if(updatedExpense.getCategory() != null){
+            ExpenseCategory category = expenseCategoryRepository.findById(updatedExpense.getCategory()).orElseThrow(() -> new RuntimeException("Category not found"));
+            expense.setCategoryId(category);
+        }
+        if(updatedExpense.getDescription() != null) expense.setDescription(updatedExpense.getDescription());
 
-        expenseRepository.save(existingExpense);
+        expenseRepository.save(expense);
 
         return ResponseEntity.ok("Expense updated successfully.");
     }

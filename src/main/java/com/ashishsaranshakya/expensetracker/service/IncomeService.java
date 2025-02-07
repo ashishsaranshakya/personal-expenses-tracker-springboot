@@ -1,6 +1,7 @@
 package com.ashishsaranshakya.expensetracker.service;
 
 import com.ashishsaranshakya.expensetracker.dto.AddIncomeRequest;
+import com.ashishsaranshakya.expensetracker.dto.UpdateIncomeRequest;
 import com.ashishsaranshakya.expensetracker.model.*;
 import com.ashishsaranshakya.expensetracker.repository.*;
 import org.springframework.stereotype.Service;
@@ -17,15 +18,18 @@ import java.util.Optional;
 public class IncomeService {
 
     private final IncomeRepository incomeRepository;
+    private final IncomeCategoryRepository incomeCategoryRepository;
 
     private final IncomeCategoriesRepository incomeCategoriesRepository;
 
     private final UserRepository userRepository;
 
-    public IncomeService(IncomeRepository incomeRepository, IncomeCategoriesRepository incomeCategoriesRepository, UserRepository userRepository) {
+    public IncomeService(IncomeRepository incomeRepository, IncomeCategoriesRepository incomeCategoriesRepository,
+                         UserRepository userRepository, IncomeCategoryRepository incomeCategoryRepository) {
         this.incomeRepository = incomeRepository;
         this.incomeCategoriesRepository = incomeCategoriesRepository;
         this.userRepository = userRepository;
+        this.incomeCategoryRepository = incomeCategoryRepository;
     }
 
     @Transactional
@@ -83,17 +87,22 @@ public class IncomeService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateIncome(String id, Income updatedIncome) {
+    public ResponseEntity<?> updateIncome(String id, UpdateIncomeRequest updatedIncome) {
         Income income = incomeRepository.findById(id).orElseThrow(() -> new RuntimeException("Income not found"));
         User user = userRepository.findById(income.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setBalance(user.getBalance() - income.getAmount() + updatedIncome.getAmount());
-        userRepository.save(user);
+        if(updatedIncome.getAmount() != income.getAmount()) {
+            user.setBalance(user.getBalance() - income.getAmount() + updatedIncome.getAmount());
+            userRepository.save(user);
+            income.setAmount(updatedIncome.getAmount());
+        }
 
-        income.setAmount(updatedIncome.getAmount());
-        income.setDate(updatedIncome.getDate());
-        income.setCategoryId(updatedIncome.getCategoryId());
-        income.setDescription(updatedIncome.getDescription());
+        if(updatedIncome.getDate() != null) income.setDate(updatedIncome.getDate());
+        if(updatedIncome.getCategory() != null){
+            IncomeCategory category = incomeCategoryRepository.findById(updatedIncome.getCategory()).orElseThrow(() -> new RuntimeException("Category not found"));
+            income.setCategoryId(category);
+        }
+        if(updatedIncome.getDescription() != null) income.setDescription(updatedIncome.getDescription());
 
         incomeRepository.save(income);
 

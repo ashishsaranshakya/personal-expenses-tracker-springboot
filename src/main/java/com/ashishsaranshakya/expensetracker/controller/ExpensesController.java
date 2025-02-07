@@ -1,7 +1,7 @@
 package com.ashishsaranshakya.expensetracker.controller;
 
 import com.ashishsaranshakya.expensetracker.dto.AddExpenseRequest;
-import com.ashishsaranshakya.expensetracker.model.Expense;
+import com.ashishsaranshakya.expensetracker.dto.UpdateExpenseRequest;
 import com.ashishsaranshakya.expensetracker.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +40,7 @@ public class ExpensesController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateExpense(@PathVariable String id, @RequestBody @Valid Expense expense) {
+    public ResponseEntity<?> updateExpense(@PathVariable String id, @RequestBody @Valid UpdateExpenseRequest expense) {
         return expenseService.updateExpense(id, expense);
     }
 

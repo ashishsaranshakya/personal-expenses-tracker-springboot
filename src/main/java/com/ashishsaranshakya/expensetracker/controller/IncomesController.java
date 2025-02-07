@@ -1,7 +1,7 @@
 package com.ashishsaranshakya.expensetracker.controller;
 
 import com.ashishsaranshakya.expensetracker.dto.AddIncomeRequest;
-import com.ashishsaranshakya.expensetracker.model.Income;
+import com.ashishsaranshakya.expensetracker.dto.UpdateIncomeRequest;
 import com.ashishsaranshakya.expensetracker.service.IncomeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -38,7 +38,7 @@ public class IncomesController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateIncome(@PathVariable String id, @RequestBody @Valid Income income) {
+    public ResponseEntity<?> updateIncome(@PathVariable String id, @RequestBody @Valid UpdateIncomeRequest income) {
         return incomeService.updateIncome(id, income);
     }
 
