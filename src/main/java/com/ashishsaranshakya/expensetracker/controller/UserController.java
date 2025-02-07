@@ -40,13 +40,13 @@ public class UserController {
     }
 
     @PostMapping("/categories/income")
-    public ResponseEntity<Map<String, String>> addIncomeCategory(@RequestBody @Valid Map<String, String> request, Principal principal) {
+    public ResponseEntity<Map<String, String>> addIncomeCategory(@RequestBody Map<String, String> request, Principal principal) {
         categoryService.addIncomeCategory(principal.getName(), request.get("name"));
         return ResponseEntity.ok(Map.of("success", "Category added successfully"));
     }
 
     @PostMapping("/categories/expense")
-    public ResponseEntity<Map<String, String>> addExpenseCategory(@RequestBody @Valid Map<String, String> request, Principal principal) {
+    public ResponseEntity<Map<String, String>> addExpenseCategory(@RequestBody Map<String, String> request, Principal principal) {
         categoryService.addExpenseCategory(principal.getName(), request.get("name"));
         return ResponseEntity.ok(Map.of("success", "Category added successfully"));
     }
