@@ -59,21 +59,24 @@ public class ExpenseService {
 
         ExpenseCategories categories = expenseCategoriesRepository.findByUserId(userId);
 
-        List<Map<String, Object>> expensesWithCategory = expenses.stream().map(expense -> {
-            ExpenseCategory category = categories.getCategories().stream()
-                    .filter(cat -> cat.getId().equals(expense.getCategoryId().getId()))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+        List<Map<String, Object>> expensesWithCategory = expenses.stream()
+                .sorted((e1, e2) -> e2.getDate().compareTo(e1.getDate()))
+                .map(expense -> {
+                    ExpenseCategory category = categories.getCategories().stream()
+                            .filter(cat -> cat.getId().equals(expense.getCategoryId().getId()))
+                            .findFirst()
+                            .orElseThrow(() -> new RuntimeException("Category not found"));
 
-            Map<String, Object> expenseMap = new HashMap<>();
-            expenseMap.put("_id", expense.getId());
-            expenseMap.put("amount", expense.getAmount());
-            expenseMap.put("date", expense.getDate());
-            expenseMap.put("category", category.getName());
-            expenseMap.put("categoryId", category.getId());
-            expenseMap.put("description", expense.getDescription());
-            return expenseMap;
-        }).toList();
+                    Map<String, Object> expenseMap = new HashMap<>();
+                    expenseMap.put("_id", expense.getId());
+                    expenseMap.put("amount", expense.getAmount());
+                    expenseMap.put("date", expense.getDate());
+                    expenseMap.put("category", category.getName());
+                    expenseMap.put("categoryId", category.getId());
+                    expenseMap.put("description", expense.getDescription());
+                    return expenseMap;
+                })
+                .toList();
 
         return ResponseEntity.ok(Map.of("success", true, "expenses", expensesWithCategory));
     }

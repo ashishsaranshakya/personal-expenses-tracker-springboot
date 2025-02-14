@@ -59,21 +59,24 @@ public class IncomeService {
 
         IncomeCategories categories = incomeCategoriesRepository.findByUserId(userId);
 
-        List<Map<String, Object>> incomesWithCategory = incomes.stream().map(expense -> {
-            IncomeCategory category = categories.getCategories().stream()
-                    .filter(cat -> cat.getId().equals(expense.getCategoryId().getId()))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+        List<Map<String, Object>> incomesWithCategory = incomes.stream()
+                .sorted((e1, e2) -> e2.getDate().compareTo(e1.getDate()))
+                .map(income -> {
+                    IncomeCategory category = categories.getCategories().stream()
+                            .filter(cat -> cat.getId().equals(income.getCategoryId().getId()))
+                            .findFirst()
+                            .orElseThrow(() -> new RuntimeException("Category not found"));
 
-            Map<String, Object> incomeMap = new HashMap<>();
-            incomeMap.put("_id", expense.getId());
-            incomeMap.put("amount", expense.getAmount());
-            incomeMap.put("date", expense.getDate());
-            incomeMap.put("category", category.getName());
-            incomeMap.put("categoryId", category.getId());
-            incomeMap.put("description", expense.getDescription());
-            return incomeMap;
-        }).toList();
+                    Map<String, Object> incomeMap = new HashMap<>();
+                    incomeMap.put("_id", income.getId());
+                    incomeMap.put("amount", income.getAmount());
+                    incomeMap.put("date", income.getDate());
+                    incomeMap.put("category", category.getName());
+                    incomeMap.put("categoryId", category.getId());
+                    incomeMap.put("description", income.getDescription());
+                    return incomeMap;
+                })
+                .toList();
 
         return ResponseEntity.ok(Map.of("success", true, "incomes", incomesWithCategory));
     }
