@@ -2,6 +2,7 @@ package com.ashishsaranshakya.expensetracker.security;
 
 import com.ashishsaranshakya.expensetracker.model.*;
 import com.ashishsaranshakya.expensetracker.repository.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -16,7 +17,8 @@ import java.util.Optional;
 
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-
+    @Value("${frontend.url}")
+    private String BASE_URL;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final IncomeCategoriesRepository incomeCategoriesRepository;
@@ -70,7 +72,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         cookie.setMaxAge(60 * 60 * 10);
         response.addCookie(cookie);
 
-        response.sendRedirect("http://localhost:3000/");
+        response.sendRedirect(BASE_URL);
     }
 
     private void assignDefaultCategories(User user) {
